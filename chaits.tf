@@ -128,7 +128,7 @@ resource "null_resource" "remote-1" {
   }
 }
 resource "aws_s3_bucket" "bucket" {
-  bucket = "saumik-test-bucket"
+  bucket = "chaitanya-test-bucket"
   acl    = "public-read"
 
   tags = {
@@ -146,7 +146,7 @@ resource "aws_s3_bucket_object" "file_upload" {
   depends_on = [
     aws_s3_bucket.bucket,
   ]
-  bucket = "saumik-test-bucket"
+  bucket = "chaitanya-test-bucket"
   key    = "image.jpg"
   source = "image.jpg"
 
@@ -211,7 +211,7 @@ resource "aws_s3_bucket_policy" "policy" {
             "AWS":"*"
          },
          "Action":"s3:GetObject",
-         "Resource":"arn:aws:s3:::saumik-test-bucket/*"
+         "Resource":"arn:aws:s3:::chaitanya-test-bucket/*"
       }
     ]
 }
