@@ -2,16 +2,16 @@ provider "aws" {
   region  = "ap-south-1"
   profile = "mychaitanya"
 }
-
+/*
 resource "aws_key_pair" "key" {
-  key_name   = "mykey112233"
-  public_key = file("mykey112233")
+  key_name   = "mykey1122"
+  public_key = file("mykey1122.pem")
 }
-
+*/
 resource "aws_security_group" "web-sg" {
   name        = "web-sg"
   description = "Allow port 22 and 80"
-  vpc_id      = "vpc-18819d70"
+  vpc_id      = "vpc-167a637e"
 
   ingress {
     from_port   = 22
@@ -41,13 +41,13 @@ resource "aws_security_group" "web-sg" {
 resource "aws_instance" "myinstance" {
   ami             = "ami-0447a12f28fddb066"
   instance_type   = "t2.micro"
-  key_name        = "mykey112233"
+  key_name        = "mykey1122"
   security_groups = ["web-sg"]
 
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = file("mykey112233")
+    private_key = file("C:/Users/LENOVO/Downloads/mykey1122.pem")
     host        = aws_instance.myinstance.public_ip
   }
 
@@ -84,12 +84,6 @@ resource "aws_volume_attachment" "ebs_attachment" {
   force_detach = true
 }
 
-resource "null_resource" "local" {
-  provisioner "local-exec" {
-    command = "echo ${aws_instance.myinstance.public_ip} > publicip.txt"
-  }
-}
-
 resource "null_resource" "remote" {
   depends_on = [
     aws_volume_attachment.ebs_attachment,
@@ -98,7 +92,7 @@ resource "null_resource" "remote" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = file("mykey112233")
+    private_key = file("C:/Users/LENOVO/Downloads/mykey1122.pem")
     host        = aws_instance.myinstance.public_ip
   }
   provisioner "remote-exec" {
@@ -116,19 +110,19 @@ resource "null_resource" "remote-1" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = file("mykey112233")
+    private_key = file("C:/Users/LENOVO/Downloads/mykey1122.pem")
     host        = aws_instance.myinstance.public_ip
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo git clone https://github.com/saumik8763/cloud-practice.git /var/www/html",
+      "sudo git clone https://github.com/chaitanya867/ccode.git /var/www/html",
       "sudo systemctl restart httpd",
       "sudo sed -i 's/cfid/${aws_cloudfront_distribution.cf_distribution.domain_name}/g' /var/www/html/index.html",
     ]
   }
 }
 resource "aws_s3_bucket" "bucket" {
-  bucket = "chaitanya-test-bucket"
+  bucket = "chaits-pre-bucket"
   acl    = "public-read"
 
   tags = {
@@ -146,9 +140,9 @@ resource "aws_s3_bucket_object" "file_upload" {
   depends_on = [
     aws_s3_bucket.bucket,
   ]
-  bucket = "chaitanya-test-bucket"
-  key    = "image.jpg"
-  source = "image.jpg"
+  bucket = "chaits-pre-bucket"
+  key    = "cartoonimage.jpg"
+  source = "cartoonimage.jpg"
 
 }
 resource "aws_cloudfront_distribution" "cf_distribution" {
@@ -211,7 +205,7 @@ resource "aws_s3_bucket_policy" "policy" {
             "AWS":"*"
          },
          "Action":"s3:GetObject",
-         "Resource":"arn:aws:s3:::chaitanya-test-bucket/*"
+         "Resource":"arn:aws:s3:::chaits-pre-bucket/*"
       }
     ]
 }
